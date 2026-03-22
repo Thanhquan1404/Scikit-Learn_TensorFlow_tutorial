@@ -69,3 +69,12 @@
 
 > ***Reinforcement Learning is a very different beast. The learning system, called an agent in this context, can observe the environment, select and perform actions, and get rewards in return (or penalties in the form of negative reward). It must then learn by itself what is the best strategy, called policy, to get the most reward over time. A policy defines what action the agent should choose when it is in a given situation.***
 
+## Batch and Online Learning
+
+> - ***Batch learning:***
+>     - ***In batch learning, the system is incapable of learning incrementally: it must be trained using all the available data. This will generally take a lot of time and computing resources, so it is typically done offline. First the system is trained, and then it is launched into production and runs without learning anymore; it just applies what is has learned. This is called offline learning.***
+>     - ***If you want a batch learning system to know about new data (such as a new type of spam), you need to train a new version of the system from scratch on the full dataset (not just the new data, but also the old data), then stop the old system and replace it with the new one.***
+> - ***Online learning:***
+>     - ***In online learning, you train the system incrementally by feeding it data instances
+>     sequentially, either individually or by small groups called mini-batches. Each learning step is fast and cheap, so the system can learn about new data on the fly, as it arrives***
+>     - ***One important parameter of online learning systems is how fast they should adapt to changing data: this is called the learning rate. If you set a high learning rate, then your system will rapidly adapt to new data, but it will also tend to quickly forget the old data (you do not want a spam filter to flag only the latest kinds of spam it was shown).***
