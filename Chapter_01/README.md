@@ -64,4 +64,8 @@
 > ***Yet another important unsupervised task is anomaly detection - for example, detecting unusual credit card transactions to prevent fraud, catching manufacturing defects, or automatically removing outliers from a dataset before feeding it to another learning algorithm. The system is trained with normal instances, and when it sees a new instance it can tell whether it looks like a normal one or whether it is likely an anomaly***
 
 > ***Another common unsupervised task is association rule learning, in which the goal is to dig into large amounts of data and discover interesting relations between attributes. For example, suppose you own a supermarket. Running an association rule on your sales logs may reveal that people who purchase barbecue sauce and potato chips also tend to buy steak. Thus, you may want to place these items close to each other.***
->
+
+## Reinforcement Learning
+
+> ***Reinforcement Learning is a very different beast. The learning system, called an agent in this context, can observe the environment, select and perform actions, and get rewards in return (or penalties in the form of negative reward). It must then learn by itself what is the best strategy, called policy, to get the most reward over time. A policy defines what action the agent should choose when it is in a given situation.***
+
