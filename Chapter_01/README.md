@@ -78,3 +78,8 @@
 >     - ***In online learning, you train the system incrementally by feeding it data instances
 >     sequentially, either individually or by small groups called mini-batches. Each learning step is fast and cheap, so the system can learn about new data on the fly, as it arrives***
 >     - ***One important parameter of online learning systems is how fast they should adapt to changing data: this is called the learning rate. If you set a high learning rate, then your system will rapidly adapt to new data, but it will also tend to quickly forget the old data (you do not want a spam filter to flag only the latest kinds of spam it was shown).***
+
+## Instance-Based Versus Model-Based Learning
+
+> - ***Instance-based learning: This is a special technique when learning from instance feature. This requires a measure of similarity between two emails. A (very basic) similarity measure between two emails could be to count the number of words they have in common. The system would flag an email as spam if it has many words in common with a known spam email.***
+> - ***Model-based learning: Another way to generalize from a set of examples is to build a model of these examples, then use that model to make predictions. For example, suppose you want to know if money makes people happy, so you download the Better Life Index data from the OECD’s website as well as stats about GDP per capita from the IMF’s website.***
