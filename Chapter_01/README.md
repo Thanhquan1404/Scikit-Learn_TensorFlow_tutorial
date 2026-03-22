@@ -21,3 +21,47 @@
 >     - ***Complex problems for which there is so good solution at all using a traditional approach: the best Machine Learning techniques and find a solution.***
 >     - ***Fluctuating environments: a Machine Learning system can adapt to new data***
 >     - ***Getting insights about complex problems and large amounts of data***
+
+## Types of Machine Learning Systems
+> - ***There are so many different types of Machine Learning systems that it is useful to classify them in broad categories based on:***
+>     - ***Whether or not they are trained with human supervision (supervised, unsupervised, semisupervised, and Reinforcement Learning)***
+>     - ***Whether or not they can learn incrementally on the fly (online versus batch learning)***
+>     - ***Whether they work by simply comparing new data points to known data points, or instead detect patterns in the training data and build a predictive model, much like scientists do (instance-based versus model-based learning)***
+
+## Supervised/Unsupervised/Semisupervised Learning
+
+> - T***here are four major categories:***
+>     - ***Supervised learning: The training data you feed to the algorithm includes the desired solutions, called labels. A typical supervised learning task is classification, another typical task is to predict a target numeric value.***
+>         - ***K-Nearest Neighbors.***
+>         - ***Linear Regression***
+>         - ***Logistic Regression***
+>         - ***Support Vector Machine (SVMs)***
+>         - ***Decision Trees and Random Forests***
+>         - ***Neural networks***
+>     - ***Unsupervised learning: In unsupervised learning, as you might guess, the training data is unlabeled. The core output of model is clustering identification:***
+>         - ***Clustering:***
+>             - ***k-Means***
+>             - ***Hierarchical Cluster Analysis (HCA)***
+>             - ***Expectation Maximization***
+>         - ***Visualization and dimensionality reduction***
+>             - ***Principal Component Analysis (PCA)***
+>             - ***Kernel PCA***
+>             - ***Locally-Linear Embedding (LLE)***
+>             - ***t-distributed Stochastic Neighbor Embedding (t-SNE)***
+>         - ***Association rule learning***
+>             - ***Apriori***
+>             - ***Eclat***
+>     - ***Semisupervised: Some algorithms can deal with partially labeled training data, usually a lot of unlabeled data and a little bit of labeled data. This is called semisupervised learning. Most semisupervised learning algorithms are combinations of unsupervised and supervised algorithms:***
+>         - ***Deep Belief Network (DBNs)***
+>         - ***Restricted Boltzmann Machines (RBMs):  are trained sequentially in an unsupervised manner, and then the whole system is fine-tuned using supervised learning techniques.***
+
+> ***Visualization algorithms are also good examples of unsupervised learning algorithm - You feed them a lot of complex and unlabeled data, and they output a 2D or 3D representation of your data that can easily be plotted.***
+> 
+
+> ***A related task is dimensionality reduction, in which the goal is to simplify the data
+> without losing too much information. One way to do this is to merge several correlated features into one.***
+
+> ***Yet another important unsupervised task is anomaly detection - for example, detecting unusual credit card transactions to prevent fraud, catching manufacturing defects, or automatically removing outliers from a dataset before feeding it to another learning algorithm. The system is trained with normal instances, and when it sees a new instance it can tell whether it looks like a normal one or whether it is likely an anomaly***
+
+> ***Another common unsupervised task is association rule learning, in which the goal is to dig into large amounts of data and discover interesting relations between attributes. For example, suppose you own a supermarket. Running an association rule on your sales logs may reveal that people who purchase barbecue sauce and potato chips also tend to buy steak. Thus, you may want to place these items close to each other.***
+>
