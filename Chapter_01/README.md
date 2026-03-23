@@ -83,3 +83,36 @@
 
 > - ***Instance-based learning: This is a special technique when learning from instance feature. This requires a measure of similarity between two emails. A (very basic) similarity measure between two emails could be to count the number of words they have in common. The system would flag an email as spam if it has many words in common with a known spam email.***
 > - ***Model-based learning: Another way to generalize from a set of examples is to build a model of these examples, then use that model to make predictions. For example, suppose you want to know if money makes people happy, so you download the Better Life Index data from the OECD’s website as well as stats about GDP per capita from the IMF’s website.***
+
+# Main Challenges of Machine Learning
+
+> ***In short, since your main task is to select a learning algorithm and train it on some data, the two things that can go wrong are “bad algorithm” and “bad data”.***
+> 
+
+## Insufficient quantity of training data
+
+> ***Machine learning is not just feed the algorithm and then check it repeat for prediction. Machine learning takes a lot of data for most Machine Learning algorithms to work properly. Even for very simple problems you typically need thousands of examples, and for complex problems such as image or speech recognition you may need millions of examples.***
+> 
+
+> ***“These results suggest that we may want to reconsider the trade off between spending time and money on algorithm development versus spending it on corpus development.”***
+
+## Nonrepresentative Training Data
+
+> - ***In order to generalize well, it is crucial that your training data be representative of the new cases you want to generalize to. This is true whether you use instance based learning or model based learning.***
+> - ***It is crucial to use a training set that is representative of the cases you want to generalize to. This is often harder than it sounds: if the sample is too small, you will have sampling noise (i.e., nonrepresentative data as a result of chance), but even very large samples can be nonrepresentative if the sampling method is flawed. This is called sampling bias***
+
+## Irrelevant Features
+
+
+> - ***Feature engineering, involves:***
+>     - ***Feature selection: selecting the most useful features to train on among existing features.***
+>     - ***Feature extraction: combining existing features to produce a more useful one (as we saw earlier, dimensionality reduction algorithms can help).***
+>     - ***Creating new features by gathering new data.***
+
+## Underfitting the Training Data
+
+> - underfitting is the opposite of overfitting: it occurs when your model is too simple to learn the underlying structure of the data. For example, a linear model of life satisfaction is prone to underfit; reality is just more complex than the model, so its predictions are bound to be inaccurate, even on the training examples.
+> - The main options to fix this problem are:
+>   - Selecting a more powerful model, with more parameters
+>   - Feeding better features to the learning algorithm (feature engineering)
+>   - Reducing the constraints on the model (e.g., reducing the regularization hyperparameter)
