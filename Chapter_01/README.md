@@ -116,3 +116,17 @@
 >   - Selecting a more powerful model, with more parameters
 >   - Feeding better features to the learning algorithm (feature engineering)
 >   - Reducing the constraints on the model (e.g., reducing the regularization hyperparameter)
+
+## Stepping Back
+
+- ***Machine Learning is about making machines get better at some task by learning from data, instead of having to explicitly code rules.***
+- ***There are many different types of ML systems: supervised or not, batch or online, instance-based or model-based, and so on.***
+- ***In a ML project you gather data in a training set, and you feed the training set to a learning algorithm. If the algorithm is model-based it tunes some parameters to fit the model to the training (to make good predictions on the training set itself), and then hopefully it will be able to make goof predictions on new cases as well. If the algorithm is instance-based, it just learns the examples by heart and uses a similarity measure to generalize to new instances.***
+- ***The system will not perform well if your training set is too small, or if the data is not representative, noisy, or polluted with irrelevant features. Lastly, your model needs to be neither too simple nor not too complex.***
+
+## Testing and Validating
+
+- The only way to know how well a model will generalize to new cases is to actually try it out on new cases. One way to do that is to put your model in production and monitor how well it performs. This works well, but if your model is horribly bad, your users will complain—not the best idea.
+- A better option is to split your data into two sets: the training set and the test set. As these names imply, you train your model using the training set, and you test it using the test set. The error rate on new cases is called the generalization error (or out-of-sample error), and by evaluating your model on the test set, you get an estimation of this error. This value tells you how well your model will perform on instances it has never seen before.
+- The problem is that you measured the generalization error multiple times on the test set, and you adapted the model and hyper-parameters to produce the best model for that set. This means that the model is unlikely to perform as well on new data.
+- To avoid “wasting” too much training data in validation sets, a common technique is to use cross-validation: the training set is split into complementary subsets, and each model is trained against a different combination of these subsets and validated against the remaining parts. Once the model type and hyper-parameters have been selected, a final model is trained using these hyper-parameters on the full training set, and the generalized error is measured on the test set.
