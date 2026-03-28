@@ -68,3 +68,65 @@ $$ \text{MAE}(y, \hat{y}) = \frac{\sum_{i=0}^{N - 1} |y_i - \hat{y}_i|}{N}$$
 - Both the RMSE and the MAE are ways to measure the distance between two vectors: the vector of predictions and the vector of target values.
     - Computing the root of a sum of squares $\text{RMSE}$ corresponds to the Euclidian norm: it is the notion of distance you are familiar with. It is also called the $l2$ norm, noted ${\lVert . \lVert}_2$ (or just ${\lVert . \lVert}$).
     - Computing the sum of absolutes $\text{MAE}$ corresponds to the $l1$ norm, noted $\lVert . \lVert _1$. It is sometimes called the $Manhattan$ norm because it measures the distance between two points in a city if you can only travel along orthogonal city blocks.
+
+    - More generally, the $l_k$ norm of vector $v$ containing $n$ elements is defined as:
+$$\lVert v \rVert_k = (|v_0|^k+|v_1|^k+ ... + |v_n|^k)^{\frac {1} {k}}$$
+
+## Check the Assumptions
+
+- ***The district prices that your system outputs are going to be fed into a downstream Machine Learning system, and we assume that these prices are going to be used as such.***
+- ***what if the downstream system actually converts the prices into categories (e.g., “cheap,” “medium,” or “expensive”) and then uses those categories instead of the prices them‐selves? ⇒ Your system just needs to get the category right. If that’s so, then the problem should have been framed as a classification task, not a regression task. You don’t want to find this out after working on a regression system for months.***
+
+## Get the Data
+
+### Create the Workspace
+
+- You will need a number of Python modules: Jupyter, NumPy, Pandas, Matplotlib, and Scikit-Learn.
+- You can use your system’s packaging system (e.g., apt-get on Ubuntu, or MacPorts or HomeBrew on macOS), install a Scientific Python distribution such as Anaconda and use its packaging system, or just use Python’s own packaging system, pip, which is included by default with the Python binary installers (since Python 2.7.9).6 You can check to see if **`*pip*`** is installed by typing the following command:
+
+```bash
+pip3 --version
+pip3 install --upgrade pip
+```
+
+- Create Isolated Environment via Venv Python Virtual Machine
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+- Install and running Jupyter Notebook on localhost
+```bash
+pip install jupyter
+pip install notebook
+```
+- Let follow these steps below to make a notebook Jupyter:
+    - $\text{File} \to \text{New} \to {notebook} \to \text{double taps to open file}$
+    - $\text{New} \to \text{Select kernel}$
+
+### Download the Data
+```python
+import os
+import tarfile
+from six.moves import urllib
+
+DOWNLOAD_ROOT = "https://raw.githubusercontent.com/ageron/handson-ml2/master/"
+HOUSING_PATH = os.path.join("datasets", "housing")
+HOUSING_URL = DOWNLOAD_ROOT + "datasets/housing/housing.tgz"
+
+def fetching_housing_data(housing_url=HOUSING_URL, housing_path=HOUSING_PATH):
+    # tạo thư mục nếu chưa tồn tại
+    if not os.path.isdir(housing_path):
+        os.makedirs(housing_path)
+
+    # đường dẫn file .tgz local
+    tgz_path = os.path.join(housing_path, "housing.tgz")
+
+    # tải file
+    urllib.request.urlretrieve(housing_url, tgz_path)
+
+    # giải nén
+    with tarfile.open(tgz_path) as housing_tgz:
+        housing_tgz.extractall(path=housing_path)
+
+fetching_housing_data()
+```
