@@ -130,3 +130,97 @@ def fetching_housing_data(housing_url=HOUSING_URL, housing_path=HOUSING_PATH):
 
 fetching_housing_data()
 ```
+
+### Take a Quick Look at the Data Structure
+
+```python
+import pandas as pd
+
+def load_housing_data(housing_path=HOUSING_PATH):
+    csv_path = os.path.join(housing_path, "housing.csv")
+
+    return pd.read_csv(csv_path)
+
+housing = load_housing_data()
+housing.head()
+```
+
+- Each row represents one district. There are 10 attributes (you can see the first 6 in the screenshot): ***longitude, latitude, housing_median_age, total_rooms, total_bedrooms, population, households, median_income, median_house_value, and ocean_proximity. And The info() method is useful to get a quick description of the data***
+
+```python
+housing.info()
+```
+
+- There are ***20,640 instances in the dataset***, which means that it is fairly small by Machine Learning standards, but it’s perfect to get started. Notice that the total_bed rooms attribute has only ***20,433 non-null values***, meaning that ***207 districts are missing this feature***. We will need to take care of this later.
+- You can find out what categories exist and how many districts belong to each category by using the value_counts() method.
+
+```python
+housing["ocean_proximity"].value_counts()
+```
+
+```python
+#The count, mean, min, and max rows are self-explanatory.
+housing.describe()
+```
+
+- A histogram shows the number of instances (on the vertical axis) that have a given value range (on the horizontal axis). You can either plot this one attribute at a time, or you can call the hist() method on the whole dataset, and it will plot a histogram for each numerical attribute.
+
+```python
+import matplotlib.pyplot as plt
+
+housing.hist(bins=50, figsize=(20, 15))
+plt.show()
+```
+
+- Well, this works, but it is not perfect: if you run the program again, it will generate a different test set! Over time, you (or your Machine Learning algorithms) will get to see the whole dataset, which is what you want to avoid.
+- Using with id table to make stable of data split when we want to keep the same testing-training data structure even if there is any changes or not
+
+```python
+import hashlib
+
+def test_set_check(identifier, test_ratio, hash):
+  return hash(np.int64(identifier)).digest()[-1] < 256 * test_ratio
+
+def split_train_test_by_id(data, test_ratio, id_column, hash=hashlib.md5):
+  ids = data[id_column]
+  in_test_set = ids.apply(lambda id_: test_set_check(id_, test_ratio, hash))
+  return data.loc[~in_test_set], data.loc[in_test_set]
+```
+
+```python
+housing["id"] = housing["longitude"] * 1000 + housing["latitude"]
+train_set, test_set = split_train_test_by_id(data=housing, test_ratio=0.2, id_column="id")r
+```
+
+- Scikit-Learn provides a few functions to split datasets into multiple subsets in various ways. The simplest function is train_test_split, which does pretty much the same thing as the function split_train_test defined earlier, with a couple of additional features.
+
+```python
+from sklearn.model_selection import train_test_split
+
+train_set, test_set = train_test_split(housing, test_size=0.2, random_state=42)
+```
+
+- Suppose you chatted with experts who told you that the median income is a very important attribute to predict median housing prices. You may want to ensure that the test set is representative of the various categories of incomes in the whole dataset.
+- This means that you should not have too many strata, and each stratum should be large enough. The following code creates an income category attribute by dividing the median income by 1.5 (to limit the number of income categories), and rounding up using ceil (to have discrete categories), and then merging all the categories greater than 5 into category 5:
+
+```python
+housing['income_cat'] = np.ceil( housing['median_income'] / 1.5)
+housing['income_cat'].where(housing['income_cat'] < 5.0, 5, inplace=True)
+housing['income_cat'].hist(bins=5)
+plt.show()
+```
+```python 
+from sklearn.model_selection import StratifiedShuffleSplit
+
+split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
+
+for train_idx, test_idx in split.split(housing, housing['income_cat']):
+  strat_train_set = housing.loc[train_idx]
+  strat_test_set = housing.loc[test_idx]
+
+strat_test_set["income_cat"].value_counts() / len(strat_test_set)
+```
+```python
+for set_ in (strat_train_set, strat_test_set):
+  set_.drop('income_cat', axis=1, inplace=True)
+```
