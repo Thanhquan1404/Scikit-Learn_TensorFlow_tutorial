@@ -224,3 +224,83 @@ strat_test_set["income_cat"].value_counts() / len(strat_test_set)
 for set_ in (strat_train_set, strat_test_set):
   set_.drop('income_cat', axis=1, inplace=True)
 ```
+## Discover and Visualize the Data to Gain Insights
+
+- First, make sure you have put the test set aside and you are only exploring the training set. Also, if the training set is very large, you may want to sample an exploration set, to make manipulations easy and fast.
+
+```python
+housing = strat_train_set.copy()
+```
+
+### Visualizing Geographical Data
+
+- Since there is geographical information (latitude and longitude), it is a good idea to create a scatterplot of all districts to visualize the data
+
+```python
+housing.plot(kind="scatter", x="longitude", y="latitude"
+```
+
+- Let set the $alpha$ to 0.1 to see the desity of graph
+
+```python
+housing.plot(
+	kind="scatter", 
+	x="longitude", 
+	y="latitude", 
+	alpha=0.1
+)
+```
+
+- Now that’s much better: you can clearly see the high-density areas, namely the Bay Area and around Los Angeles and San Diego, plus a long line of fairly high density in the Central Valley, in particular around Sacramento and Fresno.
+- The radius of each circle represents the ***district’s population (option s),*** and the color represents ***the price (option c).*** We will use a predefined ***color map (option cmap) called jet,*** which ranges from blue (low values) to red (high prices).
+
+```python
+housing.plot(
+	kind='scatter',
+	x='longitude',
+	y='latitude',
+	alpha=0.4,
+	s=housing['population']/100, label="population", 
+	figsize=(10,7),
+	c="median_house_value",
+	cmap=plt.get_cmap("jet"),
+	colorbar=True,
+)
+plt.legend()
+```
+
+- This image tells you that the housing prices are very much related to the location (e.g., close to the ocean) and to the population density, as you probably knew already. It will ***probably be useful to use a clustering algorithm to detect the main clusters,*** and add new features that measure the proximity to the cluster centers.
+
+### Looking for Correlations
+
+- Since the dataset is not too large, you can easily compute the standard correlation coefficient (also called Pearson’s r) between every pair of attributes using the corr() method:
+
+```python
+corr_matrix = housing.corr()
+```
+
+- The correlation coefficient ranges from –1 to 1. When it is close to 1, it means that there is a strong positive correlation; for example, the median house value tends to go up when the median income goes up. When the coefficient is close to –1, it means that there is a strong negative correlation; you can see a small negative correlation between the latitude and the median house value.
+
+```python
+numeric_data = housing.drop(columns=['ocean_proximate']
+corr_matrix = numeric_data.corr()
+corr_matrix.sort_values(ascending=False)
+```
+
+> The correlation coefficient only measures linear correlations (“if x
+> goes up, then y generally goes up/down”). It may completely miss
+> out on nonlinear relationships (e.g., “if x is close to zero then y generally goes up”).
+>
+
+```python
+from pandas.plotting import scatter_matrix
+
+attributes = ['median_house_value', 'median_income', 'total_rooms', 'housing_median_age']
+
+scatter_matrix(housing[attributes], figsize=(12,6))
+```
+
+```python
+housing.plot(kind="scatter", x="median_income", y="median_house_value",
+aalpha=0.1)
+```
