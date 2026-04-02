@@ -302,5 +302,105 @@ scatter_matrix(housing[attributes], figsize=(12,6))
 
 ```python
 housing.plot(kind="scatter", x="median_income", y="median_house_value",
-aalpha=0.1)
+alpha=0.1)
+```
+
+## Prepare the Data for Machine Learning Algorithm
+
+> 
+> 
+> - ***This will allow you to reproduce these transformations easily on any dataset (e.g., the next time you get a fresh dataset)***
+> - ***You will gradually build a library of transformation functions that you can reuse in future projects.***
+> - ***You can use these functions in your live system to transform the new data before feeding it to your algorithm.***
+> - ***This will make it possible for you to easily try various transformations and see which combination of transformations works best.***
+
+```python
+housing = strat_train_set.drop('median_house_value', axis=1)
+housing_label = strat_train_set['median_house_value'].copy()
+```
+
+### Data Cleaning
+
+     The new bedrooms_per_room attribute is much more correlated with the median house value than the total number of rooms or bedrooms.
+
+> 
+> 
+> - ***Get rid of the corresponding districts.***
+> - ***Get rid of the while attribute***
+> - ***Set the values to some value (zero, the mean, the median, etc)***
+
+     If you choose option 3, you should compute the median value on the training set, and use it to fill the missing values in the training set, but also don’t forget to save the median value that you have computed. You will need it later to replace missing values in the test set when you want to evaluate your system, and also once the system goes live to replace missing values in new data.
+
+```python
+housing.dropna(subset=['total_bedrooms'])   # option 1
+housing.drop('total_bedrooms', axis=1)      # option 2
+median = housing['total_bedrooms'].median() # option 3
+housing['total_bedrooms'].fillna(median, inplace=True)
+```
+
+     Scikit-Learn provides a handy class to take care of missing values: Imputer.
+
+```python
+from sklearn.preprocessing import Imputer
+imputer = Imputer(strategy='median')
+```
+
+```python
+from sklearn.preprocessing import Imputer
+
+housing_num = housing.drop('ocean_procimity', axis=1)
+imputer = Imputer(strategy='median')
+imputer.fit(housing_num)
+```
+
+The imputer has simply computed the median of each attribute and stored the result in its statistics_ instance variable.
+
+```python
+X = imputer.transform(housing_num)
+```
+
+- ***Scikit-Learn Design***
+  - Consistency: All object share a consistent and simple interface
+      - **`*Estimators:*`** **`*fit()*`** method: that takes only one parameter  or two parameter is the training dataset and training label in supervised learning.
+      - **`*Transformers:*`** Some estimators (such as an imputer) can also transform a dataset; these are called **`*transformers()*`**. This transformation generally relies on the learned parameters, as is the case for an imputer. All transformers also have a convenience method called **`*fit_transform()*`** that is equivalent to calling fit() and then transform() (but sometimes fit_transform() is optimized and runs much faster).
+      - **`*Predictor:`*** Finally, some estimators are capable of making predictions given a dataset; they are called predictors. A predictor has a **`*predict()*`** method that takes a dataset of new instances and returns a dataset of corresponding predictions. It also has a **`*score()*`** method that measures the quality of the predictions given a test set (and the corresponding labels in the case of supervised learning algorithms).
+  - **`*Inspection:*`** All the estimator’s hyperparameters are accessible directly via public instance variables (e.g., imputer.strategy), and all the estimator’s learned parameters are also accessible via public instance variables with an underscore suffix (e.g., imputer.statistics_).
+  - **`*Nonproliferation of classes:*`** Datasets are represented as NumPy arrays or SciPy sparse matrices, instead of homemade classes. Hyperparameters are just regular Python strings or numbers.
+  - **`*Composition:*`** Existing building blocks are reused as much as possible. For example, it is easy to create a Pipeline estimator from an arbitrary sequence of transformers followed by a final estimator, as we will see.
+  - **`*Sensible defaults:*`** Scikit-Learn provides reasonable default values for most parameters, making it easy to create a baseline working system quickly.
+
+### Handling Text and Categorical Attributes
+
+```python
+housing_cat = housing['ocean_proximity']
+housing_cat.head(10)
+```
+    
+
+As most machine learning, there are usually numeric datasets only, in this case we could use factorize() to analyze ‘ocean proximity’ categorical column.
+
+```python
+housing_cat_encoded, housing_categories = housing_cat.factorize()
+housing_cat_encoded[:10]
+```
+
+ML algorithms will assume that two nearby values are more similar than two distant values. Obviously this is not the case (for example, categories 0 and 4 are more similar than categories 0 and 2). To fix this issue, a common solution is to create one binary attribute per category: one attribute equal to 1 when the category is “<1H OCEAN” (and 0 otherwise), another attribute equal to 1 when the category is “NEAR OCEAN” (and 0 otherwise), and so on. This is called one-hot encoding, because only one attribute will be equal to 1 (hot), while the others will be 0 (cold).
+
+```python
+from sklearn.preprocessing import OneHotEncoder 
+encoder = OneHotEncoder()
+housing_cat_1hot = encoder.fit_transform(housing_cat_encoded.reshape(-1,1))
+housing_cat_1hot
+```
+After one-hot encoding we get a matrix with thousands of columns, and the matrix is full of zeros except for a single 1 per row. Using up tons of memory mostly to store zeros would be very wasteful, so instead a sparse matrix only stores the location of the nonzero elements.
+
+> NumPy’s reshape() function allows one dimension to be -1, which means “unspecified”: the value is inferred from the length of the array and the remaining dimensions.
+>
+
+```python
+from sklearn.preprocessing import CategoricalEncoder 
+cat_encoder = CategoricalEncoder()
+housing_cat_reshaped = housing_cat.values.reshape(-1, 1)
+housing_cat_1hot = cat_encoder.fit_transform(housing_cat_reshaped)
+housing_car_1hot
 ```
