@@ -404,3 +404,69 @@ housing_cat_reshaped = housing_cat.values.reshape(-1, 1)
 housing_cat_1hot = cat_encoder.fit_transform(housing_cat_reshaped)
 housing_car_1hot
 ```
+
+### Custom Transformers
+
+
+> Although Scikit-Learn provides many useful transformers, you will need to write
+> your own for tasks such as ***custom cleanup operations or combining specific
+> attributes.***
+
+
+> 
+> 
+> - Base class for all estimators in scikit-learn. Inheriting from this class provides default implementations of:
+>     - setting and getting parameters used by `GridSearchCV` and friends;
+>     - textual and HTML representation displayed in terminals and IDEs;
+>     - estimator serialization;
+>     - parameters validation;
+>     - data validation;
+>     - feature names validation.
+>     - Have two extra methods ***(get_params() and set_params(**dict)***
+
+```python
+from sklearn.base import BaseEstimator, TransformerMixin
+rooms_ix, bedrooms_ix, population_ix, household_ix = 3, 4, 5, 6
+
+class CombinedAttributesAdder(BaseEstimator, TransformerMixin):
+	def __init__(self, add_bedrooms_per_room = True): # no *args or **kargs
+		self.add_bedrooms_per_room = add_bedrooms_per_room
+	def fit(self, X, y=none):
+		return self #nothing else to do
+	def transform(self, X, y=None):
+		rooms_per_household = X[:, rooms_ix] / X[:, household_ix]
+		population_per_household = X[:, population_ix] / X[:, household_ix]
+		if self.add_bedrooms_per_room:
+			bedrooms_per_room = X[:, bedrooms_ix] / X[:, rooms_ix]
+			return np.c_[X, rooms_per_household, population_per_household, bedrooms_per_room]
+		else:
+			return np.c_[X, rooms_per_household, population_per_household]
+	
+attr_adder = CombinedAttributesAdder(add_bedrooms_per_room=False)
+housing_extra_attribs = attr_adder.transform(housing.values)
+```
+
+> Transformer has one hyper-parameter, add_bedrooms_per_room,
+> set to True by default (it is often helpful to provide sensible defaults). This hyperpara‐
+> meter will allow you to easily find out whether adding this attribute helps the
+> Machine Learning algorithms or not.
+
+### Feature Scaling
+
+> One of the most important transformations you need to apply to your data is ***feature
+> scaling.*** With few exceptions, Machine Learning algorithms don’t perform well when
+> the input numerical attributes have very different scales. 
+
+> There are two common ways to get all attributes to have the same scale: **`*min-max
+> scaling*`** and **`*standardization*`**. 
+- Min-max scaling (many people call this normalization) is quite simple: values are shifted and rescaled so that they end up ranging from 0 to 1. ***We do this by subtracting the min value and dividing by the max minus the min.*** Scikit-Learn provides a transformer called **`*MinMaxScaler*`** for this. It has a feature_range hyper-parameter that lets you change the range if you don’t want **`*0–1*`** for some reason.
+
+$$
+x_{scaled} = \frac {x_i - Min} {Max - Min}
+$$
+
+- **`*Standardization*`** is quite different: ***first it subtracts the mean value (so standardized values always have a zero mean), and then it divides by the variance so that the resulting distribution has unit variance.*** Unlike min-max scaling, ***standardization does not bound values to a specific range***, which may be a problem for some algorithms (e.g., neural networks often expect an input value ranging from 0 to 1). However, standardization is much less affected by outliers.
+
+$$
+  z = \frac{x - \mu}{\sigma}
+$$
