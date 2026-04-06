@@ -470,3 +470,69 @@ $$
 $$
   z = \frac{x - \mu}{\sigma}
 $$
+
+### Transformation Pipelines
+
+> As you can see, there are many data transformation steps that need to be executed in the right order. Fortunately, Snikit-Learn provides the Pipeline class to help with such sequences of transformation
+> 
+
+```python
+from sklearn.pipeline import Pipeline 
+from sklearn.preprocessing import StandardScaler
+
+num_pipeline = Pipeline([
+	('imputer', Imputer(strategy="median")),
+	('attribs_adder', CombinedAttributesAdder()),
+	('std_scaler', StandardScaler()),	
+])
+housing_num_tr = num_pipeline.fit_transform(housing_num)
+```
+
+- When you call the pipeline’s fit() method, it calls fit_transform() sequentially on all transformers, passing the output of each call as the parameter to the next call, until it reaches the final estimator, for which it just calls the fit() method.
+- Now it would be nice if we could feed a Pandas DataFrame containing non-numerical columns directly into out pipeline, instead of having to first manually extract the numerical columns into a NumPy array.
+
+```python
+from sklearn.base import BaseEstimator, TransformerMixin
+
+class DataFrameSelector(BaseEstimator, TransformerMixin):
+	def __init__(self, attribute_names):
+		self.attribute_names = attribute_names
+	def fit(self, X, y=None):
+		return self
+	def transform(self,X):
+		return X[self.attribute_names].values
+```
+
+```python
+num_attribs = list(housing_num)
+cat_attribs = ["ocean_proximity"]
+
+num_pipeline = Pipeline([
+	('selector', DataFrameSelector(num_attribs)),
+	('imputer', Imputer(strategy="median")),
+	('attribs_adder', CombinedAttributesAdder()),
+	('std_scaler', StandardScaler()),
+])
+cat_pipeline = Pipeline([
+	('selector', DataFrameSelector(cat_attribs)),
+	('cat_encoder', CategoricalEncoder(encoding='onehot-dense')),
+])
+```
+
+> But how can you join these two pipelines into a single pipeline? The answer is to use
+> Scikit-Learn’s FeatureUnion class. You give it a list of transformers (which can be
+> entire transformer pipelines); when its transform() method is called, it runs each
+> transformer’s transform() method in parallel, waits for their output, and then con‐
+> catenates them and returns the result (and of course calling its fit() method calls
+> each transformer’s fit() method).
+```python
+from sklearn.pipeline import FeatureUnion
+
+full_pipeline = FeatureUnion(transform_list=[
+	("num_pipeline", num_pipeline),
+	("cat_pipeline", cat_pipeline),
+])
+
+housing_prepared = full_pipeline.fit_transform(housing)
+housing_prepared
+```
