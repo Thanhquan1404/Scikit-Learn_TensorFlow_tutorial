@@ -536,3 +536,38 @@ full_pipeline = FeatureUnion(transform_list=[
 housing_prepared = full_pipeline.fit_transform(housing)
 housing_prepared
 ```
+
+## Select and Train a Model
+
+### Training and Evaluating on the Training Set
+
+- Let’s first train a Linear Regression model, like we did in the previous chapter:
+
+```python
+from sklearn.linear_model import LinearRegression
+
+lin_reg = LinearRegression()
+lin_reg.fit(housing_prepared, housing_labels)
+```
+
+```python
+# Let test with some simple data point
+some_data = housing.iloc[:5]
+some_labels = housing_labels.iloc[:5}
+some_data_prepared = full_pipeline.transform(some_data)
+print("Predictions:", lin_reg.predict(some_data_prepared))
+print("Labels:", list(some_labels))
+```
+
+```python
+# Let measure the prediction error of model via RMSE
+from sklearn.metrics import mean_squared_error
+housing_predictions = lin_reg.predic(housing_prepared)
+lin_mse = mean_squared_error(housing_labels, housng_predictions)
+lin_rmse = np.sqrt(lin_mse)
+lin_rmse
+```
+
+⇒ Okay, this is better than nothing but clearly not a great score: most districts’ median_housing_values range between $120,000 and $265,000, so a typical prediction error of $68,628 is not very satisfying. This is an example of a model under-fitting the training data.
+
+- Let’s train a **`*DecisionTreeRegressor*`**.
