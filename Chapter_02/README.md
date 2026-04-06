@@ -571,3 +571,16 @@ lin_rmse
 ⇒ Okay, this is better than nothing but clearly not a great score: most districts’ median_housing_values range between $120,000 and $265,000, so a typical prediction error of $68,628 is not very satisfying. This is an example of a model under-fitting the training data.
 
 - Let’s train a **`*DecisionTreeRegressor*`**.
+
+```python
+from sklearn.tree import DecisionTreeRegressor
+
+tree_reg = DecisionTreeRegressor()
+tree_reg.fit(housing_prepared, housing_labels)
+```
+```python
+housing_predictions = tree_reg.predict(housing_prepared)
+tree_mse = mean_squared_error(housing_labels, housing_predictions)
+tree_remse = np.sqrt(tree_mse)
+tree_rmse
+```
