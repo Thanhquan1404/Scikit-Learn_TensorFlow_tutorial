@@ -584,3 +584,19 @@ tree_mse = mean_squared_error(housing_labels, housing_predictions)
 tree_remse = np.sqrt(tree_mse)
 tree_rmse
 ```
+
+That’s right: the Decision Tree model is overfitting so badly that it ***performs worse
+than the Linear Regression model***.
+
+```python
+from sklearn.ensemble import RandomForestRegressor
+forest_reg = RandomForestRegressor()
+forest_reg.fit(housing_prepared_housing_labels)
+```
+
+> 
+> 
+> 
+> Wow, this is much better: Random Forests look very promising. However, note that
+> the score on the **`*training set is still much lower than on the validation sets, meaning that the model is still overfitting the training set*`**.
+>
