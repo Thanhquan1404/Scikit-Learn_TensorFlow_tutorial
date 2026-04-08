@@ -599,4 +599,42 @@ forest_reg.fit(housing_prepared_housing_labels)
 > 
 > Wow, this is much better: Random Forests look very promising. However, note that
 > the score on the **`*training set is still much lower than on the validation sets, meaning that the model is still overfitting the training set*`**.
->
+
+## Fine-Tune Your Model
+
+### Grid Search
+
+> One way to do that would be to fiddle with the hyperparameters manually, until you find a great combination of hyper-parameter values. This would be very tedious work, and you may not have time to explore many combinations.
+> 
+
+```python
+from sklearn.model_selection import GridSearchCV
+
+param_grid = [
+	{'n_estimators': [3. 10. 30], 'max_features': [2, 4, 6, 8]},
+	{'bootstrap': [False], 'n_estimators': [3, 10], 'max_features': [2, 3, 4]},
+]
+
+forest_reg = RandomForestRegressor()
+
+grid_search = GridSearchCV(forest_reg, param_grid, cv=5, 
+	scoring='neg_mean_squared_error')
+grid_search.fit(housing_prepared, housing_labels)
+
+```
+
+- This param_grid tells Scikit-Learn to first evaluate all 3 × 4 = 12 combinations of n_estimators and max_features hyper-parameter values specified in the first dict, then try all 2 × 3 = 6 combinations of hyper-parameter values in the second dict, but this time with the bootstrap hyper-parameter set to False instead of True
+
+```python
+grid_search.best_params_
+```
+
+```python
+grid_search.best_estimator_
+```
+
+```python
+cvres = grid_search.cv_results_
+for mean_score, params in zip(cvres["mean_test_score"], cvres["params"]):
+	print(np.sqrt(-mean_score), params)
+```
