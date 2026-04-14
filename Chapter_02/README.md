@@ -638,3 +638,48 @@ cvres = grid_search.cv_results_
 for mean_score, params in zip(cvres["mean_test_score"], cvres["params"]):
 	print(np.sqrt(-mean_score), params)
 ```
+
+### Randomized Search
+
+- The previous model’s parameters fine tuning is just only take experience on a few of possible value, a few combination, but when the hyper-parameter search space is large, it is often preferable to use RandomizedSearchCV instead.
+    - If you let the randomized search run for, say, 1,000 iterations, this approach will explore 1,000 different values for each hyper-parameter (instead of just a few values per hyper-parameter with the grid search approach).
+    • You have more control over the computing budget you want to allocate to hyper‐parameter search, simply by setting the number of iterations.
+
+### Ensemble Methods
+
+- Another way to fine-tune your system is to try to combine the models that perform best. The group (or “ensemble”) will often perform better than the best individual model (just like Random Forests perform better than the individual Decision Trees they rely on), especially if the individual models make very different types of errors.
+
+### Analyze the Best Models and Their Errors
+
+```python
+feature_importances = grid_search.best_estimator_.feature_importances_
+feature_importances
+```
+
+```python
+extra_attribs = ["rooms_per_hhold", "pop_per_hhold", "bedrooms_per_room"]
+cat_encoder = cat_pipeline.named_steps["cat_encoder"]
+cat_one_hot_attribs = list(cat_encoder.categories_[0])
+attributes = num_attribs + extra_attribs + cat_one_hot_attribs
+sorted(zip(feature_importances, attributes), reverse=True)
+```
+
+### Evaluate Your System on the Test Set
+```python
+final_model = grid_search.best_estimator_
+X_test = strat_test_set.drop("median_house_value", axis=1)
+y_test = strat_test_set["median_house_value"].copy()
+
+X_test_prepared = full_pipeline.transform(X_test)
+
+final_predictions = final_model.predict(X_test_prepared)
+
+final_mse = mean_squared_error(y_test, final_predictions)
+final_rmse = np.sqrt(final_mse)
+```
+
+***The performance will usually be slightly worse than what you measured using cross-validation if you did a lot of hyper-parameter tuning*** (because your system ends up fine-tuned to perform well on the validation data, and will likely not perform as well on unknown datasets)
+
+## Launch, Monitor, and Maintain Your System
+
+> You also need to write monitoring code to check your system’s live performance at regular intervals and trigger alerts when it drops. This is important to catch not only sudden breakage, but also performance degradation. This is quite common because models tend to “rot” as data evolves over time, unless the models are regularly trained on fresh data.
